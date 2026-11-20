@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<style>
+  @page { size: letter; margin: 0.7in 0.6in; }
+  body { font-family: "Times New Roman", serif; font-size: 10.5pt; color: #000; }
+  table { width: 100%; border-collapse: collapse; page-break-after: always; }
+  table:last-of-type { page-break-after: auto; }
+  td, th { border: 1px solid #000; padding: 4px 6px; vertical-align: top; white-space: pre-line; }
+  .c { text-align: center; } .b { font-weight: bold; }
+  .title { font-size: 12pt; }
+</style>
+</head>
+<body>
+{% for d in ctx.diaries %}
+<table>
+  <tr><td colspan="4" class="c b title">CASE DIARY UNDER SECTION 192 B.N.S.S<br/>(PRB Form No. 43 – Vide Rule 239)</td></tr>
+  <tr><td colspan="2" class="c b">{{ ctx.ps_upper }}</td><td colspan="2" class="c b">DISTRICT: {{ ctx.district_upper }}</td></tr>
+  <tr><td class="b">FIR No. {{ ctx.fir_no }}</td><td class="b">Date: {{ ctx.fir_date }}</td><td colspan="2" class="b">Section- {{ ctx.sections }}</td></tr>
+  <tr><td colspan="4" class="b">Name of the complainant: {{ ctx.complainant }}</td></tr>
+  <tr><td class="b">CD No: {{ d.cd_number }}</td><td colspan="3" class="b">Date: {{ d.entry_date }}</td></tr>
+  <tr><td class="c b">Arrested and sent up</td><td class="c b">Released on bail</td><td colspan="2" class="c b">At Large</td></tr>
+  <tr><td class="c">{{ d.arrested }}</td><td class="c">{{ d.bailed }}</td><td colspan="2" class="c">{{ d.at_large }}</td></tr>
+  <tr class="b c"><th style="width:14%">Sl No. &amp; hours of entry</th><th style="width:20%">Place of entry</th><th style="width:24%">Synopsis of entry</th><th style="width:42%">PARTICULARS OF ENQUIRY</th></tr>
+  <tr><td class="c">I
+{{ d.t }}</td><td class="c">{{ ctx.ps_upper }}</td><td>{{ d.first_syn }}</td><td>{{ d.first_part }}</td></tr>
+  <tr><td class="c">II
+{{ d.t }}</td><td class="c">{{ ctx.ps_upper }}</td><td>{{ d.action_taken }}</td><td>{{ d.investigation_summary }}</td></tr>
+  <tr><td class="c">III
+{{ d.t }}</td><td class="c">{{ ctx.ps_upper }}</td><td>Closing</td><td>At the side noted time closing the diary at {{ ctx.ps_upper }} pending further investigation.</td></tr>
+  <tr><td colspan="4" style="text-align:right">Submitted
+
+
+
+..................................
+(Signature of the I.O.)
+{{ ctx.io }}
+{{ ctx.ps_upper }}
+{% if ctx.district %}{{ ctx.district }} District Police{% endif %}</td></tr>
+</table>
+{% endfor %}
+</body>
+</html>

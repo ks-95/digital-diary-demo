@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: digital-diary-demo-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./src/Dockerfile
+    dockerContext: ./src
+    healthCheckPath: /health/live
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: AUTO_INIT_DB
+        value: "false"
+      - key: DB_SSL
+        value: "true"
+      - key: DB_POOL_SIZE
+        value: "1"
+      - key: DB_MAX_OVERFLOW
+        value: "0"
+      - key: DB_CONNECTION
+        sync: false
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: STORAGE_BACKEND
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: case-files
+      - key: AI_PROVIDER
+        value: auto
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: BILLING_ENFORCED
+        value: "false"
