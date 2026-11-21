@@ -23,12 +23,14 @@
   <tr><td class="c b">Arrested and sent up</td><td class="c b">Released on bail</td><td colspan="2" class="c b">At Large</td></tr>
   <tr><td class="c">{{ d.arrested }}</td><td class="c">{{ d.bailed }}</td><td colspan="2" class="c">{{ d.at_large }}</td></tr>
   <tr class="b c"><th style="width:14%">Sl No. &amp; hours of entry</th><th style="width:20%">Place of entry</th><th style="width:24%">Synopsis of entry</th><th style="width:42%">PARTICULARS OF ENQUIRY</th></tr>
-  <tr><td class="c">I
+  <tr><td class="c">{{ d.opening_serial }}
 {{ d.t }}</td><td class="c">{{ ctx.ps_upper }}</td><td>{{ d.first_syn }}</td><td>{{ d.first_part }}</td></tr>
-  <tr><td class="c">II
-{{ d.t }}</td><td class="c">{{ ctx.ps_upper }}</td><td>{{ d.action_taken }}</td><td>{{ d.investigation_summary }}</td></tr>
-  <tr><td class="c">III
-{{ d.t }}</td><td class="c">{{ ctx.ps_upper }}</td><td>Closing</td><td>At the side noted time closing the diary at {{ ctx.ps_upper }} pending further investigation.</td></tr>
+  {% for action in d.actions %}
+  <tr><td class="c">{{ action.serial_no }}
+{{ action.time }}</td><td class="c">{{ action.place }}</td><td>{{ action.action_taken }}</td><td>{{ action.investigation_summary }}</td></tr>
+  {% endfor %}
+  <tr><td class="c">{{ d.closing_serial }}
+{{ d.closing_time }}</td><td class="c">{{ ctx.ps_upper }}</td><td>Closing</td><td>At the side noted time closing the diary at {{ ctx.ps_upper }} pending further investigation.</td></tr>
   <tr><td colspan="4" style="text-align:right">Submitted
 
 

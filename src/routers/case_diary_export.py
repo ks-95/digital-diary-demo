@@ -205,7 +205,11 @@ def build_context(case: Case, diaries: list, evidences: list | None = None) -> d
             opening_action = _group_actions(opening_group) if opening_items else None
             first_syn = "RI" + (f" + {opening_action['action_taken']}" if opening_action and opening_action["action_taken"] else "")
             first_part = ri_text + (f"\n{opening_action['investigation_summary']}" if opening_action and opening_action["investigation_summary"] else "")
-        actions = [_group_actions(group) for group in grouped[1:]]
+        actions = []
+        for serial, group in enumerate(grouped[1:], start=2):
+            action = _group_actions(group)
+            action["serial_no"] = int_to_roman(serial)
+            actions.append(action)
         closing_time = grouped[-1]["time"] if grouped else ""
         if grouped and closing_time.upper().replace("HRS", "").strip() == grouped[-1]["key"]:
             # There is no separately captured closing time in the current entry
@@ -219,9 +223,11 @@ def build_context(case: Case, diaries: list, evidences: list | None = None) -> d
             "bailed": next((d.bailed_accused.strip() for d in reversed(day_entries) if d.bailed_accused and d.bailed_accused.strip()), "NIL"),
             "at_large": next((d.at_large_accused.strip() for d in reversed(day_entries) if d.at_large_accused and d.at_large_accused.strip()), ""),
             "t": opening_group["time"],
+            "opening_serial": "I",
             "first_syn": first_syn,
             "first_part": first_part,
             "actions": actions,
+            "closing_serial": int_to_roman(len(actions) + 2),
             "closing_time": closing_time,
             "dsr_number": next((d.dsr_number for d in reversed(day_entries) if d.dsr_number), ""),
         })

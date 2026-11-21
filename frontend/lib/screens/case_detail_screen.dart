@@ -170,9 +170,15 @@ class _CaseDetailScreenState extends State<CaseDetailScreen> {
     final summaryCtrl = TextEditingController();
     final actionCtrl = TextEditingController();
     final dsrCtrl = TextEditingController();
-    final nowTime = TimeOfDay.now();
-    final diaryTimeCtrl = TextEditingController(
-        text: '${nowTime.hour.toString().padLeft(2, '0')}:${nowTime.minute.toString().padLeft(2, '0')}');
+    final now = DateTime.now();
+    var selectedDate = DateTime(now.year, now.month, now.day);
+    var selectedTime = TimeOfDay.fromDateTime(now);
+    String formatDate(DateTime value) =>
+        '${value.day.toString().padLeft(2, '0')}.${value.month.toString().padLeft(2, '0')}.${value.year}';
+    String formatTime(TimeOfDay value) =>
+        '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
+    final diaryDateCtrl = TextEditingController(text: formatDate(selectedDate));
+    final diaryTimeCtrl = TextEditingController(text: formatTime(selectedTime));
     bool showMoE = false;
     showDialog(
       context: context,
@@ -192,10 +198,65 @@ class _CaseDetailScreenState extends State<CaseDetailScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(
-                    controller: diaryTimeCtrl,
-                    style: const TextStyle(color: AppTheme.textWhite, fontSize: 13),
-                    decoration: const InputDecoration(labelText: 'Diary entry time (local)', hintText: 'e.g., 14:35'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: diaryDateCtrl,
+                          readOnly: true,
+                          onTap: () async {
+                            final picked = await showDatePicker(
+                              context: ctx,
+                              initialDate: selectedDate,
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now(),
+                              helpText: 'Select the diary entry date',
+                            );
+                            if (picked != null) {
+                              set(() {
+                                selectedDate = DateTime(picked.year, picked.month, picked.day);
+                                diaryDateCtrl.text = formatDate(selectedDate);
+                              });
+                            }
+                          },
+                          style: const TextStyle(color: AppTheme.textWhite, fontSize: 13),
+                          decoration: const InputDecoration(
+                            labelText: 'Diary date',
+                            prefixIcon: Icon(Icons.calendar_today_outlined, size: 17),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: diaryTimeCtrl,
+                          readOnly: true,
+                          onTap: () async {
+                            final picked = await showTimePicker(
+                              context: ctx,
+                              initialTime: selectedTime,
+                              helpText: 'Select the diary entry time',
+                            );
+                            if (picked != null) {
+                              set(() {
+                                selectedTime = picked;
+                                diaryTimeCtrl.text = formatTime(selectedTime);
+                              });
+                            }
+                          },
+                          style: const TextStyle(color: AppTheme.textWhite, fontSize: 13),
+                          decoration: const InputDecoration(
+                            labelText: 'Entry time (24-hour)',
+                            prefixIcon: Icon(Icons.access_time, size: 17),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Entries are ordered by date and time. Entries on the same date share a CD number; a new date starts the next CD number and resets the Sl No.',
+                    style: TextStyle(color: AppTheme.textSoft, fontSize: 11),
                   ),
                   const SizedBox(height: 12),
                   TextField(
@@ -317,6 +378,7 @@ class _CaseDetailScreenState extends State<CaseDetailScreen> {
                 }
 
                 final payload = {
+                  'entry_date': '${selectedDate.year.toString().padLeft(4, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}',
                   'investigation_summary': summaryCtrl.text.trim(),
                   'action_taken': actionCtrl.text.trim(),
                   'diary_entry_time': diaryTimeCtrl.text.trim(),
